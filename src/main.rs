@@ -1,3 +1,5 @@
+use imp_rust;
+
 fn main() {
-    println!("Hello, world!");
+    imp_rust::run().unwrap();
 }
