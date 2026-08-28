@@ -1,5 +1,6 @@
-use imp_rust;
+use std::env::{self, Args};
 
 fn main() {
-    imp_rust::run().unwrap();
+    let args: Args = env::args();
+    imp_rust::run(args).unwrap();
 }
