@@ -20,8 +20,10 @@ struct Config<'a> {
     filepath: ConfigField<&'a Path>,
 }
 
-impl Config<'_> {
-    fn new(args: &mut Args) -> Config {
+impl Config<'static> {
+    fn new<'b>(args: &mut Args) -> Config<'b> {
+        let args: Vec<String> = args.collect();
+
         Config {
             filepath: ConfigField {
                 value: Path::new("test.bmp"),
