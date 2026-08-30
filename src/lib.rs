@@ -1,6 +1,6 @@
 use std::env::Args;
 use std::error::Error;
-use std::path::Path;
+use std::path::PathBuf;
 
 #[allow(dead_code)]
 enum FlagType {
@@ -16,26 +16,30 @@ struct ConfigField<T> {
     flag: FlagType,
 }
 
-struct Config<'a> {
-    filepath: ConfigField<&'a Path>,
+#[allow(dead_code)]
+struct Config {
+    filepath: ConfigField<PathBuf>,
 }
 
-impl Config<'static> {
-    fn new<'b>(args: &mut Args) -> Config<'b> {
-        let args: Vec<String> = args.collect();
+impl Config {
+    fn new(mut args: Args) -> Config {
+        // skip first arg — binary executable path
+        args.next()
+            .expect("found no initial argument! what happened?!");
 
-        Config {
-            filepath: ConfigField {
-                value: Path::new("test.bmp"),
-                optional: false,
-                flag: FlagType::Nil,
-            },
-        }
+        let filepath_str: String =
+            args.next().expect("imp binary found no args");
+        let filepath: ConfigField<PathBuf> = ConfigField {
+            value: PathBuf::from(filepath_str),
+            optional: false,
+            flag: FlagType::Nil,
+        };
+
+        Config { filepath }
     }
 }
 
-pub fn run(mut args: Args) -> Result<(), Box<dyn Error>> {
-    println!("Hello, World!");
-    let _config: Config = Config::new(&mut args);
+pub fn run(args: Args) -> Result<(), Box<dyn Error>> {
+    let config: Config = Config::new(args);
     Ok(())
 }
