@@ -2,6 +2,9 @@
 name = "imp"
 version = "0.1.0"
 edition = "2024"
+description = "IMP (The Immortal Model Parser) — A parser/compiler for Immortal Engine source files."
+license = "GPL-3.0-or-later"
 
 
 [dependencies]
+clap = { version = "4.6.6", features = ["cargo", "derive"] }
