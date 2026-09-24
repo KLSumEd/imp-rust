@@ -1,4 +1,4 @@
-use std::error::Error;
+use anyhow::{self, Result};
 
 mod cli {
     // TODO: Implement CLI -- Kai
@@ -13,34 +13,64 @@ mod cli {
     //      - fn handler_fn() { /* do custom arg parsing */ }
     //      - For fundamental parsing, use shared parse_arg() function(s)
 
+    use super::Result;
     use std::env::{self, Args};
+    use thiserror::Error;
 
-    pub fn parse() {
+    pub fn parse() -> Result<()> {
         let mut args: Args = env::args();
 
-        let Some(command) = args.next() else {
-            CliError::handle_error(CliError::NoCmd)
+        if args.next() == None {
+            return Err(CliError::NoExePath.into());
         };
 
-        unimplemented!()
+        let Some(command) = args.next() else {
+            return Err(CliError::NoCommand.into());
+        };
+
+        parse_command(&command)
     }
 
-    fn parse_command() {}
-
-    struct CliError {
-        code: u16,
-        name: &'static str,
-        description: &'static str,
-    }
-
-    impl CliError {
-        fn handle_error(error: CliError) -> ! {
-            todo!()
+    fn parse_command(command: &str) -> Result<()> {
+        match command {
+            "build" => parse_cmd_build(),
+            "test" => parse_cmd_test(),
+            "lint" => parse_cmd_lint(),
+            "format" => parse_cmd_format(),
+            _other => Err(CliError::UnknownCommand(String::from(_other)).into()),
         }
+    }
+
+    fn parse_cmd_build() -> Result<()> {
+        todo!();
+    }
+
+    fn parse_cmd_test() -> Result<()> {
+        todo!();
+    }
+
+    fn parse_cmd_lint() -> Result<()> {
+        todo!();
+    }
+
+    fn parse_cmd_format() -> Result<()> {
+        todo!();
+    }
+
+    #[allow(unused)]
+    #[derive(Error, Debug)]
+    enum CliError {
+        #[error("initial argument was not the path to this executable")]
+        NoExePath,
+
+        #[error("no command was given")]
+        NoCommand,
+
+        #[error("unrecognised command `{0:?}`")]
+        UnknownCommand(String),
     }
 }
 
-pub fn run() -> Result<(), Box<dyn Error>> {
-    cli::parse();
-    Ok(())
+pub fn run() -> Result<()> {
+    cli::parse()
 }
